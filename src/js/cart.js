@@ -1,16 +1,29 @@
 import { getLocalStorage } from "./utils.mjs";
 
 function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart");
+  let cartItems = getLocalStorage("so-cart");
+
+  // Ensure cartItems is always an array
+  if (!cartItems) {
+    cartItems = [];
+  } else if (!Array.isArray(cartItems)) {
+    cartItems = [cartItems];
+  }
+
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
 }
 
 function cartItemTemplate(item) {
+  // Use the correct image property
+  const imageUrl =
+    item.Images && item.Images.PrimaryMedium
+      ? item.Images.PrimaryMedium
+      : item.Image;
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
     <img
-      src="${item.Image}"
+      src="${imageUrl}"
       alt="${item.Name}"
     />
   </a>
