@@ -1,22 +1,9 @@
+import { getParam } from "./utils.mjs";
 import ProductData from "./ProductData.mjs";
+import ProductDetails from "./ProductDetails.mjs";
 
 const dataSource = new ProductData("tents");
+const productID = getParam("product");
 
-function addProductToCart(product) {
-  let cart = JSON.parse(localStorage.getItem("so-cart"));
-  if (!Array.isArray(cart)) {
-    cart = cart ? [cart] : [];
-  }
-  cart.push(product);
-  localStorage.setItem("so-cart", JSON.stringify(cart));
-}
-// add to cart button event handler
-async function addToCartHandler(e) {
-  const product = await dataSource.findProductById(e.target.dataset.id);
-  addProductToCart(product);
-}
-
-// add listener to Add to Cart button
-document
-  .getElementById("addToCart")
-  .addEventListener("click", addToCartHandler);
+const product = new ProductDetails(productID, dataSource);
+product.init();
