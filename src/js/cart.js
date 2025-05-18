@@ -12,6 +12,21 @@ function renderCartContents() {
 
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
+
+  // Calculate and display total
+  const total = cartItems.reduce((sum, item) => sum + (parseFloat(item.FinalPrice) || 0), 0);
+  let totalElem = document.getElementById("cartTotal");
+  if (!totalElem) {
+    totalElem = document.createElement("div");
+    totalElem.id = "cartTotal";
+    totalElem.className = "cart-total-centered";
+    // Move to the end of main
+    document.querySelector("main").appendChild(totalElem);
+  }
+  totalElem.textContent = `Total: $${total.toFixed(2)}`;
+
+  // Update cart count in header
+  updateCartCount(cartItems.length);
 }
 
 function cartItemTemplate(item) {
@@ -38,4 +53,17 @@ function cartItemTemplate(item) {
   return newItem;
 }
 
+function updateCartCount(count) {
+  let badge = document.querySelector(".cart-count");
+  if (!badge) {
+    const cartIcon = document.querySelector(".cart");
+    badge = document.createElement("span");
+    badge.className = "cart-count";
+    cartIcon.appendChild(badge);
+  }
+  badge.textContent = count > 0 ? count : "";
+}
+
 renderCartContents();
+
+export { updateCartCount };
