@@ -1,4 +1,5 @@
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { updateCartCount } from "./cart.js";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -16,9 +17,16 @@ export default class ProductDetails {
   }
 
   addProductToCart() {
-    const cartItems = getLocalStorage("so-cart") || [];
+    let cartItems = getLocalStorage("so-cart");
+    if (!cartItems) {
+      cartItems = [];
+    } else if (!Array.isArray(cartItems)) {
+      cartItems = [cartItems];
+    }
+    console.log("Adding to cart:", this.product);
     cartItems.push(this.product);
     setLocalStorage("so-cart", cartItems);
+    updateCartCount(cartItems.length);
   }
 
   renderProductDetails() {
@@ -27,18 +35,33 @@ export default class ProductDetails {
 }
 
 function productDetailsTemplate(product) {
-  document.querySelector("h2").textContent = product.Brand.Name;
-  document.querySelector("h3").textContent = product.NameWithoutBrand;
+  document.querySelector("h3").textContent = product.Brand.Name;
+  document.querySelector("h2").textContent = product.NameWithoutBrand;
 
-  const productImage = document.getElementById("productImage");
-  productImage.src = product.Image;
-  productImage.alt = product.NameWithoutBrand;
+  const productImage = document.querySelector(".product-detail img");
+  if (productImage) {
+    productImage.src = product.Image;
+    productImage.alt = product.NameWithoutBrand;
+  }
 
-  document.getElementById("productPrice").textContent = product.FinalPrice;
-  document.getElementById("productColor").textContent =
-    product.Colors[0].ColorName;
-  document.getElementById("productDesc").innerHTML =
-    product.DescriptionHtmlSimple;
+  const priceElement = document.querySelector(".product-card__price");
+  if (priceElement) {
+    priceElement.textContent = `$${product.FinalPrice}`;
+  }
 
-  document.getElementById("addToCart").dataset.id = product.Id;
+  const colorElement = document.querySelector(".product__color");
+  if (colorElement) {
+    colorElement.textContent = product.Colors[0].ColorName;
+  }
+
+  const descElement = document.querySelector(".product__description");
+  if (descElement) {
+    descElement.innerHTML = product.DescriptionHtmlSimple;
+  }
+
+  const addToCartButton = document.getElementById("addToCart");
+  if (addToCartButton) {
+    addToCartButton.dataset.id = product.Id;
+  }
 }
+

@@ -13,4 +13,6 @@ productList.init();
 
 // Update cart count on page load
 const cartItems = getLocalStorage("so-cart");
-updateCartCount(cartItems ? (Array.isArray(cartItems) ? cartItems.length : 1) : 0);
+updateCartCount(
+  cartItems ? (Array.isArray(cartItems) ? cartItems.length : 1) : 0,
+);

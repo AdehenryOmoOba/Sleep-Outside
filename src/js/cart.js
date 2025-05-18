@@ -1,6 +1,10 @@
 import { getLocalStorage } from "./utils.mjs";
 
 function renderCartContents() {
+  // Only render cart contents if we're on the cart page
+  const productList = document.querySelector(".product-list");
+  if (!productList) return;
+
   let cartItems = getLocalStorage("so-cart");
 
   // Ensure cartItems is always an array
@@ -10,11 +14,31 @@ function renderCartContents() {
     cartItems = [cartItems];
   }
 
-  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
-  document.querySelector(".product-list").innerHTML = htmlItems.join("");
+  // Filter out invalid items
+  const validItems = cartItems.filter(
+    (item) =>
+      item &&
+      (item.Image || (item.Images && item.Images.PrimaryMedium)) &&
+      item.Name &&
+      item.Colors &&
+      item.Colors[0] &&
+      item.Colors[0].ColorName &&
+      item.FinalPrice,
+  );
+
+  const htmlItems = validItems.map((item) => cartItemTemplate(item));
+  if (htmlItems.length === 0) {
+    productList.innerHTML =
+      "<li style='width:100%;text-align:center;padding:2em;'>Your cart is empty.</li>";
+  } else {
+    productList.innerHTML = htmlItems.join("");
+  }
 
   // Calculate and display total
-  const total = cartItems.reduce((sum, item) => sum + (parseFloat(item.FinalPrice) || 0), 0);
+  const total = validItems.reduce(
+    (sum, item) => sum + (parseFloat(item.FinalPrice) || 0),
+    0,
+  );
   let totalElem = document.getElementById("cartTotal");
   if (!totalElem) {
     totalElem = document.createElement("div");
@@ -26,7 +50,7 @@ function renderCartContents() {
   totalElem.textContent = `Total: $${total.toFixed(2)}`;
 
   // Update cart count in header
-  updateCartCount(cartItems.length);
+  updateCartCount(validItems.length);
 }
 
 function cartItemTemplate(item) {
@@ -57,6 +81,7 @@ function updateCartCount(count) {
   let badge = document.querySelector(".cart-count");
   if (!badge) {
     const cartIcon = document.querySelector(".cart");
+    if (!cartIcon) return; // Don't try to create badge if cart icon doesn't exist
     badge = document.createElement("span");
     badge.className = "cart-count";
     cartIcon.appendChild(badge);
@@ -64,6 +89,18 @@ function updateCartCount(count) {
   badge.textContent = count > 0 ? count : "";
 }
 
-renderCartContents();
+// Only render cart contents if we're on the cart page
+if (window.location.pathname.includes("/cart/")) {
+  renderCartContents();
+} else {
+  // Just update the cart count on other pages
+  const cartItems = getLocalStorage("so-cart");
+  const count = cartItems
+    ? Array.isArray(cartItems)
+      ? cartItems.length
+      : 1
+    : 0;
+  updateCartCount(count);
+}
 
 export { updateCartCount };
