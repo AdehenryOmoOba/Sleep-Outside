@@ -1,5 +1,4 @@
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
-import { updateCartCount } from "./cart.js";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -12,21 +11,14 @@ export default class ProductDetails {
     this.product = await this.dataSource.findProductById(this.productId);
     this.renderProductDetails();
     document
-      .getElementById("addToCart")
+      .getElementById("add-to-cart")
       .addEventListener("click", this.addProductToCart.bind(this));
   }
 
   addProductToCart() {
-    let cartItems = getLocalStorage("so-cart");
-    if (!cartItems) {
-      cartItems = [];
-    } else if (!Array.isArray(cartItems)) {
-      cartItems = [cartItems];
-    }
-    console.log("Adding to cart:", this.product);
+    const cartItems = getLocalStorage("so-cart") || [];
     cartItems.push(this.product);
     setLocalStorage("so-cart", cartItems);
-    updateCartCount(cartItems.length);
   }
 
   renderProductDetails() {
@@ -35,33 +27,22 @@ export default class ProductDetails {
 }
 
 function productDetailsTemplate(product) {
-  document.querySelector("h3").textContent = product.Brand.Name;
-  document.querySelector("h2").textContent = product.NameWithoutBrand;
+  document.querySelector("h2").textContent =
+    product.Category.charAt(0).toUpperCase() + product.Category.slice(1);
+  document.querySelector("#p-brand").textContent = product.Brand.Name;
+  document.querySelector("#p-name").textContent = product.NameWithoutBrand;
 
-  const productImage = document.querySelector(".product-detail img");
-  if (productImage) {
-    productImage.src = product.Image;
-    productImage.alt = product.NameWithoutBrand;
-  }
+  const productImage = document.querySelector("#p-image");
+  productImage.src = product.Images.PrimaryExtraLarge;
+  productImage.alt = product.NameWithoutBrand;
+  const euroPrice = new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(Number(product.FinalPrice) * 0.85);
+  document.querySelector("#p-price").textContent = `${euroPrice}`;
+  document.querySelector("#p-color").textContent = product.Colors[0].ColorName;
+  document.querySelector("#p-description").innerHTML =
+    product.DescriptionHtmlSimple;
 
-  const priceElement = document.querySelector(".product-card__price");
-  if (priceElement) {
-    priceElement.textContent = `$${product.FinalPrice}`;
-  }
-
-  const colorElement = document.querySelector(".product__color");
-  if (colorElement) {
-    colorElement.textContent = product.Colors[0].ColorName;
-  }
-
-  const descElement = document.querySelector(".product__description");
-  if (descElement) {
-    descElement.innerHTML = product.DescriptionHtmlSimple;
-  }
-
-  const addToCartButton = document.getElementById("addToCart");
-  if (addToCartButton) {
-    addToCartButton.dataset.id = product.Id;
-  }
+  document.querySelector("#add-to-cart").dataset.id = product.Id;
 }
-
