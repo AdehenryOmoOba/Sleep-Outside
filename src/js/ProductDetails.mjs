@@ -1,4 +1,9 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  renderBreadcrumbTrail,
+  capitalize,
+} from "./utils.mjs";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -9,10 +14,25 @@ export default class ProductDetails {
 
   async init() {
     this.product = await this.dataSource.findProductById(this.productId);
+
+    const category = this.product.Category || "Unknown";
+    renderBreadcrumbTrail([
+      { label: "Home", href: "/" },
+      {
+        label: capitalize(category),
+        href: `/product_listing/index.html?category=${category}`,
+      },
+      {
+        label: this.product.Brand.Name,
+        href: "#",
+      },
+    ]);
+
     this.renderProductDetails();
+
     document
-      .getElementById("add-to-cart")
-      .addEventListener("click", this.addProductToCart.bind(this));
+      .getElementById("addToCart")
+      ?.addEventListener("click", this.addProductToCart.bind(this));
   }
 
   addProductToCart() {
