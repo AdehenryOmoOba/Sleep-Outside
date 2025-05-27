@@ -1,11 +1,11 @@
+import { getParam, loadHeaderFooter } from "./utils.mjs";
 import ProductData from "./ProductData.mjs";
 import ProductDetails from "./ProductDetails.mjs";
 
-const dataSource = new ProductData("tents");
-const addToCartButton = document.getElementById("addToCart");
-const productID = addToCartButton ? addToCartButton.dataset.id : null;
+loadHeaderFooter();
 
-if (productID) {
-  const product = new ProductDetails(productID, dataSource);
-  product.init();
-}
+const dataSource = new ProductData("tents");
+const productID = getParam("product");
+
+const product = new ProductDetails(productID, dataSource);
+product.init();
