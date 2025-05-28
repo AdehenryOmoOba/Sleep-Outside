@@ -376,3 +376,47 @@ footer {
   margin: 0;
   font-size: 0.9em;
 }
+
+.top-products-h2 {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+#breadcrumb-wrapper {
+  padding: 1rem 5.2rem;
+}
+
+@media (min-width: 1024px) {
+  #breadcrumb-wrapper {
+    padding: 1rem 0;
+  }
+}
+
+.breadcrumb {
+  font-size: 0.95rem;
+  color: #333;
+  margin: 1rem 0;
+  padding: 0 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb-link {
+  text-decoration: underline;
+  color: #4b0082;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: none;
+  color: #2e005c;
+}
+
+.breadcrumb a:last-of-type {
+  text-decoration: none;
+  cursor: default;
+  pointer-events: none;
+  color: #000;
+}

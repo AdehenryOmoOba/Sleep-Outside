@@ -24,6 +24,7 @@ export default class ProductList {
     const list = await this.dataSource.getData(this.category);
     this.renderList(list);
     document.querySelector(".title").textContent = this.category;
+    return list.length;
   }
 
   renderList(list) {
