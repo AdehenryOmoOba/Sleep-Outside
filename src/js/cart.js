@@ -34,20 +34,16 @@ function renderCartContents() {
     productList.innerHTML = htmlItems.join("");
   }
 
-  // Calculate and display total
   const total = validItems.reduce(
     (sum, item) => sum + (parseFloat(item.FinalPrice) || 0),
-    0,
+    0
   );
-  let totalElem = document.getElementById("cartTotal");
-  if (!totalElem) {
-    totalElem = document.createElement("div");
-    totalElem.id = "cartTotal";
-    totalElem.className = "cart-total-centered";
-    // Move to the end of main
-    document.querySelector("main").appendChild(totalElem);
+  
+  const totalElem = document.getElementById("checkout-summary-total");
+  
+  if (totalElem) {
+    totalElem.textContent = `Total: $${total.toFixed(2)}`;
   }
-  totalElem.textContent = `Total: $${total.toFixed(2)}`;
 
   // Update cart count in header
   updateCartCount(validItems.length);
