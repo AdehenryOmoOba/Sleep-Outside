@@ -1,4 +1,6 @@
+/* eslint-disable no-console */
 import { getLocalStorage } from "./utils.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 
 export default class CheckoutProcess {
   constructor(key, outputSelector) {
@@ -9,6 +11,7 @@ export default class CheckoutProcess {
     this.shipping = 0;
     this.tax = 0;
     this.orderTotal = 0;
+    this.services = new ExternalServices();
   }
 
   init() {
@@ -17,10 +20,15 @@ export default class CheckoutProcess {
   }
 
   calculateItemSubTotal() {
-    this.itemTotal = this.list.reduce((total, item) => total + item.FinalPrice, 0);
+    this.itemTotal = this.list.reduce(
+      (total, item) => total + item.FinalPrice,
+      0,
+    );
 
-    document.querySelector(`${this.outputSelector} #subtotal`).textContent = `$${this.itemTotal.toFixed(2)}`;
-    document.querySelector(`${this.outputSelector} #num-items`).textContent = this.list.length;
+    document.querySelector(`${this.outputSelector} #subtotal`).textContent =
+      `$${this.itemTotal.toFixed(2)}`;
+    document.querySelector(`${this.outputSelector} #num-items`).textContent =
+      this.list.length;
 
     this.calculateOrderTotal();
   }
@@ -34,8 +42,52 @@ export default class CheckoutProcess {
   }
 
   displayOrderTotals() {
-    document.querySelector(`${this.outputSelector} #tax`).textContent = `$${this.tax.toFixed(2)}`;
-    document.querySelector(`${this.outputSelector} #shipping`).textContent = `$${this.shipping.toFixed(2)}`;
-    document.querySelector(`${this.outputSelector} #order-total`).textContent = `$${this.orderTotal.toFixed(2)}`;
+    document.querySelector(`${this.outputSelector} #tax`).textContent =
+      `$${this.tax.toFixed(2)}`;
+    document.querySelector(`${this.outputSelector} #shipping`).textContent =
+      `$${this.shipping.toFixed(2)}`;
+    document.querySelector(`${this.outputSelector} #order-total`).textContent =
+      `$${this.orderTotal.toFixed(2)}`;
+  }
+
+  packageItems(items) {
+    return items.map((item) => ({
+      id: item.Id,
+      name: item.Name,
+      price: item.FinalPrice,
+      quantity: 1,
+    }));
+  }
+
+  async checkout(form) {
+    const formData = new FormData(form);
+    const order = {};
+    formData.forEach((value, key) => {
+      order[key] = value;
+    });
+
+    order.orderDate = new Date().toISOString();
+    order.items = this.packageItems(this.list);
+    order.orderTotal = this.orderTotal.toFixed(2);
+    order.tax = this.tax.toFixed(2);
+    order.shipping = this.shipping;
+
+    try {
+      await this.services.checkout(order);
+
+      document.querySelector("main").innerHTML = `
+        <h2>Thank you for your order, ${order.fname}!</h2>
+        <p>Your order has been successfully placed.</p>
+        <p>Order Total: $${order.orderTotal}</p>
+      `;
+
+      localStorage.removeItem(this.key);
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      document.querySelector("main").innerHTML = `
+        <h2>Sorry!</h2>
+        <p>There was an issue placing your order. Please try again later.</p>
+      `;
+    }
   }
 }

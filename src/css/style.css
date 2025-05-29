@@ -494,11 +494,11 @@ form button[type="submit"] {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 2rem;
 }
 
 form button[type="submit"]:hover {
   background-color: #004d40;
-  margin-top: 2rem;
 }
 
 .order-summary {

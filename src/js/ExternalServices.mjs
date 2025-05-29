@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
 function convertToJson(res) {
@@ -10,10 +9,8 @@ function convertToJson(res) {
 }
 
 export default class ExternalServices {
-  constructor() {}
-
   async getData(category) {
-    const response = await fetch(`${baseURL}products/search/${category} `);
+    const response = await fetch(`${baseURL}products/search/${category}`);
     const data = await convertToJson(response);
     return data.Result;
   }
@@ -24,23 +21,15 @@ export default class ExternalServices {
     return data.Result;
   }
 
-  async checkout(order) {
-    const url = `${baseURL}checkout`;
-    const options = {
+  async checkout(payload) {
+    const response = await fetch(`${baseURL}checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(order),
-    };
+      body: JSON.stringify(payload),
+    });
 
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Checkout failed:", error);
-      throw new Error("Unable to complete checkout.");
-    }
+    return convertToJson(response);
   }
 }
