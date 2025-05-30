@@ -63,12 +63,16 @@ export async function loadHeaderFooter() {
 
   const headerElement = document.querySelector("#main-header");
   const footerElement = document.querySelector("#main-footer");
-
-  renderWithTemplate(headerTemplate, headerElement);
-  renderWithTemplate(footerTemplate, footerElement);
-
-  // Load Breadcrumb
   const breadcrumbElement = document.querySelector("#breadcrumb-wrapper");
+
+  if (headerElement) {
+    renderWithTemplate(headerTemplate, headerElement);
+  }
+
+  if (footerElement) {
+    renderWithTemplate(footerTemplate, footerElement);
+  }
+
   if (breadcrumbElement) {
     renderWithTemplate(breadcrumbTemplate, breadcrumbElement);
   }
