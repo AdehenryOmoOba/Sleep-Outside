@@ -74,14 +74,8 @@ export default class CheckoutProcess {
 
     try {
       await this.services.checkout(order);
-
-      document.querySelector("main").innerHTML = `
-        <h2>Thank you for your order, ${order.fname}!</h2>
-        <p>Your order has been successfully placed.</p>
-        <p>Order Total: $${order.orderTotal}</p>
-      `;
-
       localStorage.removeItem(this.key);
+      window.location.href = "/checkout/success.html";
     } catch (err) {
       console.error("Checkout failed:", err);
       document.querySelector("main").innerHTML = `
