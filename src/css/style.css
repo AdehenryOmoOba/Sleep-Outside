@@ -170,7 +170,7 @@ button {
 
 /* Styles for product lists */
 .product-card {
-  flex: 1 1 45%;
+  flex: 1 1 30%;
   margin: 0.25em;
   padding: 0.5em;
   border: 1px solid var(--light-grey);
@@ -532,4 +532,25 @@ form button[type="submit"]:hover {
   font-weight: bold;
   font-size: 1.1rem;
   border-bottom: none;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-family: inherit;
+}
+
+#sort-select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#sort-select:focus {
+  outline: 2px solid #ffa500;
+  border-color: #ffa500;
 }
