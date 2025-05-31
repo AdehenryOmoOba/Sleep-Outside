@@ -11,6 +11,9 @@ loadHeaderFooter().then(() => {
   listing.init().then((count) => {
     renderBreadcrumb(category, count);
   });
+  document
+    .querySelector("#sort-select")
+    .addEventListener("change", (e) => listing.sortAndRender(e.target.value));
 });
 
 function renderBreadcrumb(categoryName, count = null) {
@@ -18,7 +21,7 @@ function renderBreadcrumb(categoryName, count = null) {
   if (!breadcrumb) return;
 
   const capitalized =
-  categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase();
+    categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase();
 
   breadcrumb.innerHTML = "";
 

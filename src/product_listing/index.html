@@ -15,6 +15,17 @@
       <h2 class="top-products-h2">
         Top Products: <span class="title" id="category-name"></span>
       </h2>
+      <div class="sort-container">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select">
+          <option value="">Default</option>
+          <option value="name-asc">Name A-Z</option>
+          <option value="name-desc">Name Z-A</option>
+          <option value="price-asc">Price Low → High</option>
+          <option value="price-desc">Price High → Low</option>
+        </select>
+      </div>
+
       <ul class="product-list"></ul>
     </main>
     <footer id="main-footer"></footer>
